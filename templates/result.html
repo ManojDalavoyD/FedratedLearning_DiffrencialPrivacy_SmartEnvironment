@@ -3,142 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Home Energy AI</title>
+    <title>Analysis Result</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f4f9; 
-            margin: 0; 
-            padding: 20px; 
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 600px;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        p.subtitle {
-            text-align: center;
-            color: #7f8c8d;
-            margin-bottom: 30px;
-            font-size: 0.9em;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Two columns */
-            gap: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-size: 0.85em;
-            color: #34495e;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        input {
-            padding: 10px;
-            border: 1px solid #dfe6e9;
-            border-radius: 6px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 25px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        /* Context fields (Temp/Size) look slightly different */
-        .context-section {
-            grid-column: span 2;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px dashed #ced6e0;
-        }
+        body { font-family: sans-serif; background: #f3f4f6; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         
-        .context-title {
-            grid-column: span 2;
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #95a5a6;
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
+        /* HEADER */
+        .header { text-align: center; margin-bottom: 30px; }
+        .kwh-number { font-size: 2.5em; color: #2563eb; font-weight: bold; }
+        
+        /* CARDS */
+        .card { padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #ccc; background: #fff; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
+        
+        /* COLORS based on Python 'type' variable */
+        .card.success { background-color: #dcfce7; border-left-color: #22c55e; color: #14532d; }
+        .card.warning { background-color: #ffedd5; border-left-color: #f97316; color: #7c2d12; }
+        
+        .title { font-weight: bold; font-size: 1.1em; display: block; }
+        .desc { font-size: 0.9em; display: block; margin-top: 5px; }
+        
+        .btn { display: block; width: 100%; background: #333; color: white; text-align: center; padding: 15px; border-radius: 5px; text-decoration: none; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🏡 Federated Energy AI</h1>
-        <p class="subtitle">Privacy-Preserving Home Energy Auditor</p>
+        <div class="header">
+            <h2>Total Predicted Load</h2>
+            <div class="kwh-number">{{ prediction }} kWh</div>
+        </div>
+
+        <h3>📝 Appliance Report</h3>
         
-        <form action="/analyze" method="post">
-            <div class="form-grid">
-                
-                <div class="context-title">Environmental Context</div>
-                {% for feature in features %}
-                    {% if feature in ['Temp', 'Size'] %}
-                    <div class="form-group">
-                        <label>{{ feature }} {{ '(°C)' if feature == 'Temp' else '(People)' }}</label>
-                        <input type="number" step="0.1" name="{{ feature }}" required placeholder="0">
-                    </div>
-                    {% endif %}
-                {% endfor %}
+        {% if suggestions %}
+            {% for item in suggestions %}
+                <div class="card {{ item.type }}">
+                    <span class="title">{{ item.appliance }}</span>
+                    <span class="desc">{{ item.action }}</span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center;">No data found. Please check your Python logic.</p>
+        {% endif %}
 
-                <div class="context-title">Appliance Usage (kWh)</div>
-                {% for feature in features %}
-                    {% if feature not in ['Temp', 'Size'] %}
-                    <div class="form-group">
-                        <label>{{ feature }}</label>
-                        <input type="number" step="0.01" name="{{ feature }}" placeholder="0.00">
-                    </div>
-                    {% endif %}
-                {% endfor %}
-
-            </div>
-
-            <button type="submit" onclick="this.innerText='Analyzing...'">🚀 Analyze My Home</button>
-        </form>
+        <a href="/" class="btn">Analyze Again</a>
     </div>
 
 </body>
