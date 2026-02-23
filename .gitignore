@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Secrets
+.env
+
+# Large Files / Models
+*.h5
+*.pkl
+Dataset/
+
+# IDEs
+.vscode/
+.idea/
+
+# Images
+*.png
+*.jpg
+*.jpeg

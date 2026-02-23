@@ -7,6 +7,10 @@ class VirtualClient:
         self.client_id = client_id
         self.X, self.y = data
         self.model = create_model(input_dim)
+
+    def update_data(self, data):
+        """Updates the local dataset for the next training round."""
+        self.X, self.y = data
         
     def set_weights(self, global_weights):
         self.model.set_weights(global_weights)
@@ -39,11 +43,8 @@ class VirtualClient:
         # 2. Get the Clean Weights
         clean_weights = self.model.get_weights()
         
-        # --- SCENARIO 2: NO PRIVACY SETUP ---
-        # We define 'privacy_weights' as just the clean weights (No Noise)
-        privacy_weights = clean_weights 
-        
-        # NOTE: To switch back to Scenario 3 (With Privacy), use this line instead:
+        # --- SCENARIO 3: WITH DIFFERENTIAL PRIVACY ---
+        # We apply Gaussian noise to the weights before sending to server
         privacy_weights = self.apply_dp_noise(clean_weights)
         
         return privacy_weights, history.history['loss'][-1]
